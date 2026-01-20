@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#00bcd4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Verity Wallet</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="verity-icon.png">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #0d1b2a 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .gradient-accent {
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(0,188,212,0.15) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            padding-bottom: 80px;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .logo {
+            height: 35px;
+        }
+        
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, rgba(0,188,212,0.15) 0%, rgba(139,195,74,0.15) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 195, 74, 0.2);
+            margin: 20px;
+            padding: 30px 25px;
+            border-radius: 25px;
+            text-align: center;
+        }
+        
+        .balance-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .balance-amount {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00bcd4, #8bc34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .balance-usd {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.1em;
+        }
+        
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(139, 195, 74, 0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #8bc34a;
+            margin-top: 15px;
+        }
+        
+        /* Action Buttons */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 0 20px;
+            margin: 20px 0;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 15px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .action-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        
+        .action-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+        
+        /* Transaction List */
+        .section {
+            padding: 0 20px;
+            margin: 30px 0;
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .tx-item {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tx-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 188, 212, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        
+        .tx-details {
+            flex: 1;
+            margin-left: 15px;
+        }
+        
+        .tx-type {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .tx-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85em;
+        }
+        
+        .tx-amount {
+            text-align: right;
+        }
+        
+        .tx-value {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .tx-status {
+            color: #8bc34a;
+            font-size: 0.85em;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: #00bcd4;
+        }
+        
+        .nav-icon {
+            font-size: 1.5em;
+            margin-bottom: 3px;
+        }
+        
+        .nav-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .nav-item.active .nav-label {
+            color: #00bcd4;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a2332 100%);
+            border: 1px solid rgba(139, 195, 74, 0.2);
+            border-radius: 25px;
+            padding: 30px 25px;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            background: linear-gradient(135deg, #00bcd4, #8bc34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+        
+        .input-field:focus {
+            border-color: rgba(139, 195, 74, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .primary-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00bcd4, #8bc34a);
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .primary-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .qr-code {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .address-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-accent"></div>
+    
+    <div class="container">
+        <header>
+            <img src="verity-logo.png" alt="Verity" class="logo">
+            <button class="settings-btn" onclick="showSettings()">⚙️</button>
+        </header>
+
+        <div class="balance-card">
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-amount" id="balance">500,000</div>
+            <div class="balance-usd">≈ $12,500 USD</div>
+            <div class="privacy-badge">🔒 Fully Private</div>
+        </div>
+
+        <div class="actions">
+            <div class="action-btn" onclick="showSend()">
+                <div class="action-icon">📤</div>
+                <div class="action-label">Send</div>
+            </div>
+            <div class="action-btn" onclick="showReceive()">
+                <div class="action-icon">📥</div>
+                <div class="action-label">Receive</div>
+            </div>
+            <div class="action-btn" onclick="showSwap()">
+                <div class="action-icon">🔄</div>
+                <div class="action-label">Swap</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Recent Activity</h2>
+            
+            <div class="tx-item">
+                <div class="tx-icon">📤</div>
+                <div class="tx-details">
+                    <div class="tx-type">Sent VTY</div>
+                    <div class="tx-time">Today at 2:34 PM</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value">-1,000 VTY</div>
+                    <div class="tx-status">✓ Confirmed</div>
+                </div>
+            </div>
+            
+            <div class="tx-item">
+                <div class="tx-icon">📥</div>
+                <div class="tx-details">
+                    <div class="tx-type">Received VTY</div>
+                    <div class="tx-time">Yesterday</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value" style="color: #8bc34a;">+50,000 VTY</div>
+                    <div class="tx-status">✓ Confirmed</div>
+                </div>
+            </div>
+            
+            <div class="tx-item">
+                <div class="tx-icon">🔄</div>
+                <div class="tx-details">
+                    <div class="tx-type">Swapped on DEX</div>
+                    <div class="tx-time">2 days ago</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value">100 VTY</div>
+                    <div class="tx-status">✓ Private</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div class="nav-icon">💰</div>
+            <div class="nav-label">Wallet</div>
+        </div>
+        <div class="nav-item" onclick="showSwap()">
+            <div class="nav-icon">🔄</div>
+            <div class="nav-label">Swap</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Activity</div>
+        </div>
+        <div class="nav-item" onclick="showSettings()">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">Settings</div>
+        </div>
+    </div>
+
+    <!-- Send Modal -->
+    <div class="modal" id="sendModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Send VTY</h2>
+                <button class="close-btn" onclick="closeModal('sendModal')">&times;</button>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Recipient Address</label>
+                <input type="text" class="input-field" placeholder="verity1...">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Amount (VTY)</label>
+                <input type="number" class="input-field" placeholder="0.00">
+            </div>
+            
+            <div class="privacy-badge" style="width: 100%; justify-content: center; margin: 15px 0;">
+                🔒 Transaction will be fully private
+            </div>
+            
+            <button class="primary-btn">Send VTY</button>
+        </div>
+    </div>
+
+    <!-- Receive Modal -->
+    <div class="modal" id="receiveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Receive VTY</h2>
+                <button class="close-btn" onclick="closeModal('receiveModal')">&times;</button>
+            </div>
+            
+            <div class="qr-code">
+                <div style="font-size: 8em; color: #333;">📱</div>
+                <div style="color: #666; margin-top: 10px;">QR Code</div>
+            </div>
+            
+            <div class="input-label">Your Verity Address</div>
+            <div class="address-box" id="userAddress">
+                verity1j90a2rl3l85wppl6c9uf5l6qmvx8n3mpgandm3ma2d89zn8mxvc89g0gjd3nw3hng55985xevnnfk3vg8ytr37ukxspqxpwu477knzah0swclcg53xmyj8sssypfl56a7k6g2e
+            </div>
+            
+            <button class="primary-btn" onclick="copyAddress()">Copy Address</button>
+        </div>
+    </div>
+
+    <!-- Swap Modal -->
+    <div class="modal" id="swapModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Swap Tokens</h2>
+                <button class="close-btn" onclick="closeModal('swapModal')">&times;</button>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">You Pay</label>
+                <input type="number" class="input-field" placeholder="100" value="100">
+                <div style="color: rgba(255,255,255,0.5); font-size: 0.85em; margin-top: 5px;">VTY</div>
+            </div>
+            
+            <div style="text-align: center; margin: 15px 0; font-size: 1.5em; color: #8bc34a;">↓</div>
+            
+            <div class="input-group">
+                <label class="input-label">You Receive</label>
+                <input type="number" class="input-field" placeholder="0.00" readonly>
+                <div style="color: rgba(255,255,255,0.5); font-size: 0.85em; margin-top: 5px;">Select Token</div>
+            </div>
+            
+            <div class="privacy-badge" style="width: 100%; justify-content: center; margin: 15px 0;">
+                🔒 Private swap via DEX
+            </div>
+            
+            <button class="primary-btn">Swap (Coming Soon)</button>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function showSend() {
+            document.getElementById('sendModal').classList.add('active');
+        }
+        
+        function showReceive() {
+            document.getElementById('receiveModal').classList.add('active');
+        }
+        
+        function showSwap() {
+            document.getElementById('swapModal').classList.add('active');
+        }
+        
+        function showSettings() {
+            alert('Settings coming soon! 🔧');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        
+        function copyAddress() {
+            const address = document.getElementById('userAddress').textContent;
+            navigator.clipboard.writeText(address).then(() => {
+                alert('Address copied to clipboard! 📋');
+            });
+        }
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+        
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>

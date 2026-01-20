@@ -1,0 +1,16 @@
+{
+  "name": "Verity Wallet",
+  "short_name": "Verity",
+  "description": "The fastest private crypto wallet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#00bcd4",
+  "icons": [
+    {
+      "src": "verity-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
