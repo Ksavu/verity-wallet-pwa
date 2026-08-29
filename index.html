@@ -376,9 +376,17 @@
 
         <div class="balance-card">
             <div class="balance-label">Total Balance</div>
-            <div class="balance-amount" id="balance">500,000</div>
-            <div class="balance-usd">≈ $12,500 USD</div>
+            <div class="balance-amount" id="balance">—</div>
+            <div class="balance-usd" id="balanceHint">Wallet balance unavailable in read-only mode</div>
             <div class="privacy-badge">🔒 Fully Private</div>
+        </div>
+
+        <div class="section" id="networkPanel">
+            <h2 class="section-title">Live Verity Network</h2>
+            <div class="tx-item"><div class="tx-details"><div class="tx-type">Chain ID</div></div><div class="tx-amount"><div class="tx-value" id="chainId">Loading...</div></div></div>
+            <div class="tx-item"><div class="tx-details"><div class="tx-type">Block Height</div></div><div class="tx-amount"><div class="tx-value" id="blockHeight">Loading...</div><div class="tx-status" id="nodeStatus">Connecting...</div></div></div>
+            <div class="tx-item"><div class="tx-details"><div class="tx-type">Validators</div></div><div class="tx-amount"><div class="tx-value" id="validatorCount">Loading...</div></div></div>
+            <div class="tx-item"><div class="tx-details"><div class="tx-type">Last Block</div></div><div class="tx-amount"><div class="tx-value" id="lastBlockTime">Loading...</div></div></div>
         </div>
 
         <div class="actions">
@@ -398,42 +406,7 @@
 
         <div class="section">
             <h2 class="section-title">Recent Activity</h2>
-            
-            <div class="tx-item">
-                <div class="tx-icon">📤</div>
-                <div class="tx-details">
-                    <div class="tx-type">Sent VTY</div>
-                    <div class="tx-time">Today at 2:34 PM</div>
-                </div>
-                <div class="tx-amount">
-                    <div class="tx-value">-1,000 VTY</div>
-                    <div class="tx-status">✓ Confirmed</div>
-                </div>
-            </div>
-            
-            <div class="tx-item">
-                <div class="tx-icon">📥</div>
-                <div class="tx-details">
-                    <div class="tx-type">Received VTY</div>
-                    <div class="tx-time">Yesterday</div>
-                </div>
-                <div class="tx-amount">
-                    <div class="tx-value" style="color: #8bc34a;">+50,000 VTY</div>
-                    <div class="tx-status">✓ Confirmed</div>
-                </div>
-            </div>
-            
-            <div class="tx-item">
-                <div class="tx-icon">🔄</div>
-                <div class="tx-details">
-                    <div class="tx-type">Swapped on DEX</div>
-                    <div class="tx-time">2 days ago</div>
-                </div>
-                <div class="tx-amount">
-                    <div class="tx-value">100 VTY</div>
-                    <div class="tx-status">✓ Private</div>
-                </div>
-            </div>
+            <div class="tx-item"><div class="tx-details"><div class="tx-type">Live transaction history</div><div class="tx-time">Connect a wallet to view private activity</div></div><div class="tx-status">Read-only</div></div>
         </div>
     </div>
 
@@ -498,7 +471,7 @@
             
             <div class="input-label">Your Verity Address</div>
             <div class="address-box" id="userAddress">
-                verity1j90a2rl3l85wppl6c9uf5l6qmvx8n3mpgandm3ma2d89zn8mxvc89g0gjd3nw3hng55985xevnnfk3vg8ytr37ukxspqxpwu477knzah0swclcg53xmyj8sssypfl56a7k6g2e
+                Create a wallet to generate a verity1... address
             </div>
             
             <button class="primary-btn" onclick="copyAddress()">Copy Address</button>
@@ -536,6 +509,56 @@
     </div>
 
     <script>
+        const RPC_URL = 'https://rpc.veritynetwork.io';
+        const EXPECTED_CHAIN_ID = 'verity-testnet-001';
+
+        async function rpc(path) {
+            const response = await fetch(`${RPC_URL}${path}`, {
+                headers: { Accept: 'application/json' },
+                cache: 'no-store'
+            });
+            if (!response.ok) throw new Error(`RPC request failed: ${response.status}`);
+            return response.json();
+        }
+
+        function formatBlockTime(value) {
+            if (!value) return '—';
+            const date = new Date(value);
+            return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+        }
+
+        async function refreshNetwork() {
+            const status = await rpc('/status');
+            const result = status.result;
+            const chainId = result.node_info.network;
+            const height = result.sync_info.latest_block_height;
+            const catchingUp = result.sync_info.catching_up;
+
+            document.getElementById('chainId').textContent = chainId;
+            document.getElementById('blockHeight').textContent = height;
+            document.getElementById('lastBlockTime').textContent = formatBlockTime(result.sync_info.latest_block_time);
+            document.getElementById('nodeStatus').textContent = chainId === EXPECTED_CHAIN_ID
+                ? (catchingUp ? 'Syncing' : 'Online')
+                : `Wrong chain: ${chainId}`;
+            document.getElementById('nodeStatus').style.color = chainId === EXPECTED_CHAIN_ID && !catchingUp ? '#8bc34a' : '#ffb74d';
+
+            const validators = await rpc('/validators?per_page=1');
+            document.getElementById('validatorCount').textContent = validators.result.total;
+        }
+
+        async function loadLiveNetwork() {
+            try {
+                await refreshNetwork();
+            } catch (error) {
+                console.error('Verity RPC error:', error);
+                document.getElementById('nodeStatus').textContent = 'RPC unavailable';
+                document.getElementById('nodeStatus').style.color = '#ef5350';
+            }
+        }
+
+        loadLiveNetwork();
+        setInterval(loadLiveNetwork, 5000);
+
         // Modal functions
         function showSend() {
             document.getElementById('sendModal').classList.add('active');

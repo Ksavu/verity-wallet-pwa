@@ -1,4 +1,4 @@
-const CACHE_NAME = 'verity-wallet-v1';
+const CACHE_NAME = 'verity-wallet-v2';
 const urlsToCache = [
   '/',
   '/index.html',
