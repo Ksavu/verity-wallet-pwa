@@ -440,19 +440,20 @@
             
             <div class="input-group">
                 <label class="input-label">Recipient Address</label>
-                <input type="text" class="input-field" placeholder="verity1...">
+                <input type="text" class="input-field" id="sendRecipient" placeholder="verity1...">
             </div>
             
             <div class="input-group">
                 <label class="input-label">Amount (VTY)</label>
-                <input type="number" class="input-field" placeholder="0.00">
+                <input type="number" class="input-field" id="sendAmount" placeholder="0.00">
             </div>
             
             <div class="privacy-badge" style="width: 100%; justify-content: center; margin: 15px 0;">
                 🔒 Transaction will be fully private
             </div>
             
-            <button class="primary-btn">Send VTY</button>
+            <button class="primary-btn" onclick="handleSend()">Send VTY</button>
+            <div id="sendStatus" style="margin-top: 10px; font-size: 0.85em;"></div>
         </div>
     </div>
 
@@ -510,6 +511,7 @@
 
     <script>
         const RPC_URL = 'https://rpc.veritynetwork.io';
+        const WALLET_API_URL = 'https://wallet-api.veritynetwork.io';
         const EXPECTED_CHAIN_ID = 'verity-testnet-001';
 
         async function rpc(path) {
@@ -558,6 +560,65 @@
 
         loadLiveNetwork();
         setInterval(loadLiveNetwork, 5000);
+
+        
+async function loadWalletBalance() {
+    try {
+        const [balanceRes, addressRes] = await Promise.all([
+            fetch(`${WALLET_API_URL}/wallet/balance`).then(r => r.json()),
+            fetch(`${WALLET_API_URL}/wallet/address`).then(r => r.json())
+        ]);
+
+        document.getElementById('balance').textContent = balanceRes.balance.toLocaleString();
+        const addrEl = document.getElementById('userAddress');
+        if (addrEl) addrEl.textContent = addressRes.address;
+    } catch (error) {
+        console.error('Wallet API error:', error);
+        document.getElementById('balance').textContent = 'Error';
+    }
+}
+
+async function sendVTY(recipient, amount) {
+    const response = await fetch(`${WALLET_API_URL}/wallet/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: recipient, amount: amount })
+    });
+    return response.json();
+}
+
+
+async function handleSend() {
+    const recipient = document.getElementById('sendRecipient').value.trim();
+    const amount = document.getElementById('sendAmount').value.trim();
+    const statusEl = document.getElementById('sendStatus');
+
+    if (!recipient.startsWith('verity1') || !amount || Number(amount) <= 0) {
+        statusEl.style.color = '#ef5350';
+        statusEl.textContent = 'Enter a valid address and amount';
+        return;
+    }
+
+    statusEl.style.color = '#8bc34a';
+    statusEl.textContent = 'Sending...';
+
+    try {
+        const result = await sendVTY(recipient, amount);
+        if (result.success) {
+            statusEl.textContent = `Sent! Tx: ${result.txHash.substring(0, 16)}...`;
+            loadWalletBalance();
+        } else {
+            statusEl.style.color = '#ef5350';
+            statusEl.textContent = result.error || 'Transaction failed';
+        }
+    } catch (error) {
+        statusEl.style.color = '#ef5350';
+        statusEl.textContent = 'Network error. Please try again.';
+    }
+}
+
+loadWalletBalance();
+setInterval(loadWalletBalance, 10000);
 
         // Modal functions
         function showSend() {
