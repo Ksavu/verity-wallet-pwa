@@ -512,6 +512,26 @@
     <script>
         const RPC_URL = 'https://rpc.veritynetwork.io';
         const WALLET_API_URL = 'https://wallet-api.veritynetwork.io';
+        
+let currentAccountIndex = null;
+
+async function getOrCreateAccount() {
+    const stored = localStorage.getItem('verityAccountIndex');
+    if (stored !== null) {
+        currentAccountIndex = parseInt(stored);
+        return;
+    }
+
+    try {
+        const response = await fetch(`${WALLET_API_URL}/wallet/create`, { method: 'POST' });
+        const data = await response.json();
+        currentAccountIndex = data.accountIndex;
+        localStorage.setItem('verityAccountIndex', currentAccountIndex);
+    } catch (error) {
+        console.error('Failed to create account:', error);
+        currentAccountIndex = 0;
+    }
+}
         const EXPECTED_CHAIN_ID = 'verity-testnet-001';
 
         async function rpc(path) {
@@ -563,10 +583,14 @@
 
         
 async function loadWalletBalance() {
+    if (currentAccountIndex === null) {
+        await getOrCreateAccount();
+    }
+
     try {
         const [balanceRes, addressRes] = await Promise.all([
-            fetch(`${WALLET_API_URL}/wallet/balance`).then(r => r.json()),
-            fetch(`${WALLET_API_URL}/wallet/address`).then(r => r.json())
+            fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`).then(r => r.json()),
+            fetch(`${WALLET_API_URL}/wallet/address/${currentAccountIndex}`).then(r => r.json())
         ]);
 
         document.getElementById('balance').textContent = balanceRes.balance.toLocaleString();
@@ -582,11 +606,10 @@ async function sendVTY(recipient, amount) {
     const response = await fetch(`${WALLET_API_URL}/wallet/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: recipient, amount: amount })
+        body: JSON.stringify({ to: recipient, amount: amount, source: currentAccountIndex })
     });
     return response.json();
 }
-
 
 async function handleSend() {
     const recipient = document.getElementById('sendRecipient').value.trim();
