@@ -346,12 +346,31 @@
         }
         
         .qr-code {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin: 20px 0;
-        }
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+#qrCode {
+    min-width: 220px;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#qrCode img,
+#qrCode canvas {
+    width: 220px !important;
+    height: 220px !important;
+    image-rendering: pixelated;
+}
+
         
         .address-box {
             background: rgba(255, 255, 255, 0.05);
@@ -466,9 +485,11 @@
             </div>
             
             <div class="qr-code">
-                <div style="font-size: 8em; color: #333;">📱</div>
-                <div style="color: #666; margin-top: 10px;">QR Code</div>
+                <div id="qrCode" aria-label="Verity receiving address QR code"></div>
+                <div id="qrStatus" style="color: #666; margin-top: 10px;">
+                    Loading address...
             </div>
+        </div>
             
             <div class="input-label">Your Verity Address</div>
             <div class="address-box" id="userAddress">
@@ -509,6 +530,8 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <script>
         const RPC_URL = 'https://rpc.veritynetwork.io';
         const WALLET_API_URL = 'https://wallet-api.veritynetwork.io';
@@ -528,10 +551,74 @@ async function getOrCreateAccount() {
         currentAccountIndex = data.accountIndex;
         localStorage.setItem('verityAccountIndex', currentAccountIndex);
     } catch (error) {
-        console.error('Failed to create account:', error);
-        currentAccountIndex = 0;
-    }
+    console.error('Failed to create account:', error);
+    currentAccountIndex = null;
+    throw error;
 }
+
+}
+        
+        async function loadWalletAddress() {
+    if (currentAccountIndex === null) {
+        await getOrCreateAccount();
+    }
+
+    if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
+        throw new Error('No valid user account is available');
+    }
+
+    const response = await fetch(
+        `${WALLET_API_URL}/wallet/address/${currentAccountIndex}`,
+        { cache: 'no-store' }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Address request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const address = String(data.address || '').trim();
+
+    if (!/^verity1[0-9a-z]+$/.test(address)) {
+        throw new Error('Invalid Verity address returned by API');
+    }
+
+    document.getElementById('userAddress').textContent = address;
+    renderReceiveQr(address);
+    return address;
+}
+
+function renderReceiveQr(address) {
+    const qrElement = document.getElementById('qrCode');
+    const statusElement = document.getElementById('qrStatus');
+
+    if (!qrElement || !statusElement) return;
+
+    qrElement.replaceChildren();
+
+    if (!address || !address.startsWith('verity1')) {
+        statusElement.textContent = 'Create a wallet to generate a QR code';
+        return;
+    }
+
+    if (typeof QRCode === 'undefined') {
+        statusElement.textContent = 'QR library could not be loaded';
+        console.error('QRCode library is unavailable');
+        return;
+    }
+
+    new QRCode(qrElement, {
+        text: address,
+        width: 220,
+        height: 220,
+        colorDark: '#111111',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+    });
+
+    statusElement.textContent = 'Scan to receive VTY';
+}
+
         const EXPECTED_CHAIN_ID = 'verity-testnet-001';
 
         async function rpc(path) {
@@ -594,8 +681,11 @@ async function loadWalletBalance() {
         ]);
 
         document.getElementById('balance').textContent = balanceRes.balance.toLocaleString();
-        const addrEl = document.getElementById('userAddress');
-        if (addrEl) addrEl.textContent = addressRes.address;
+const address = String(addressRes.address || '').trim();
+const addrEl = document.getElementById('userAddress');
+if (addrEl) addrEl.textContent = address;
+renderReceiveQr(address);
+
     } catch (error) {
         console.error('Wallet API error:', error);
         document.getElementById('balance').textContent = 'Error';
@@ -649,8 +739,13 @@ setInterval(loadWalletBalance, 10000);
         }
         
         function showReceive() {
-            document.getElementById('receiveModal').classList.add('active');
-        }
+    document.getElementById('receiveModal').classList.add('active');
+
+    const address = document.getElementById('userAddress')?.textContent.trim();
+    if (address && address.startsWith('verity1')) {
+        renderReceiveQr(address);
+    }
+}
         
         function showSwap() {
             document.getElementById('swapModal').classList.add('active');
