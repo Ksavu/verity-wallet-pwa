@@ -500,41 +500,65 @@
         </div>
     </div>
 
-    <!-- Swap Modal -->
-    <div class="modal" id="swapModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Swap Tokens</h2>
-                <button class="close-btn" onclick="closeModal('swapModal')">&times;</button>
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">You Pay</label>
-                <input type="number" class="input-field" placeholder="100" value="100">
-                <div style="color: rgba(255,255,255,0.5); font-size: 0.85em; margin-top: 5px;">VTY</div>
-            </div>
-            
-            <div style="text-align: center; margin: 15px 0; font-size: 1.5em; color: #8bc34a;">↓</div>
-            
-            <div class="input-group">
-                <label class="input-label">You Receive</label>
-                <input type="number" class="input-field" placeholder="0.00" readonly>
-                <div style="color: rgba(255,255,255,0.5); font-size: 0.85em; margin-top: 5px;">Select Token</div>
-            </div>
-            
-            <div class="privacy-badge" style="width: 100%; justify-content: center; margin: 15px 0;">
-                🔒 Private swap via DEX
-            </div>
-            
-            <button class="primary-btn">Swap (Coming Soon)</button>
+<!-- Swap Modal -->
+<div class="modal" id="swapModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Swap Tokens</h2>
+            <button class="close-btn" onclick="closeModal('swapModal' )">&times;</button>
         </div>
+
+        <div class="input-group">
+            <label class="input-label" for="swapFromToken">You Pay</label>
+            <select id="swapFromToken" class="input-field">
+                <option value="vty">VTY</option>
+                <option value="usdv">USDV</option>
+            </select>
+            <div id="swapFromBalance" class="input-help">Balance: loading...</div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="swapAmount">Amount</label>
+            <input id="swapAmount" type="number" class="input-field"
+                   min="0" step="any" placeholder="0.00">
+        </div>
+
+        <div style="text-align:center; margin:15px 0; font-size:1.5em; color:#8bc34a;">↓</div>
+
+        <div class="input-group">
+            <label class="input-label" for="swapToToken">You Receive</label>
+            <select id="swapToToken" class="input-field">
+                <option value="usdv">USDV</option>
+                <option value="vty">VTY</option>
+            </select>
+            <input id="swapEstimatedReceive" type="text" class="input-field"
+                   readonly placeholder="Estimate will appear here">
+        </div>
+
+        <div id="swapRate" class="input-help">
+            Reference rate: 1 VTY = 100 USDV
+        </div>
+
+        <div class="privacy-badge" style="width:100%; justify-content:center; margin:15px 0;">
+            Shielded swap via Verity DEX
+        </div>
+
+        <div id="swapStatus" class="input-help"></div>
+
+        <button id="swapButton" class="primary-btn" onclick="handleSwap()">
+            Swap
+        </button>
     </div>
+</div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         const RPC_URL = 'https://rpc.veritynetwork.io';
         const WALLET_API_URL = 'https://wallet-api.veritynetwork.io';
+        const DEX_API_URL = 'https://dex-api.veritynetwork.io';
+
         
 let currentAccountIndex = null;
 
@@ -668,6 +692,91 @@ function renderReceiveQr(address) {
         loadLiveNetwork();
         setInterval(loadLiveNetwork, 5000);
 
+function updateSwapEstimate() {
+    const fromToken = document.getElementById('swapFromToken').value;
+    const toToken = document.getElementById('swapToToken').value;
+    const amount = Number(document.getElementById('swapAmount').value);
+    const output = document.getElementById('swapEstimatedReceive');
+
+    if (fromToken === toToken) {
+        output.value = 'Choose different tokens';
+        return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        output.value = '';
+        return;
+    }
+
+    // Display-only testnet estimate. The final result comes from the DEX API.
+    const estimated = fromToken === 'vty'
+        ? amount * 100
+        : amount / 100;
+
+    output.value = `${estimated.toFixed(6)} ${toToken.toUpperCase()} estimated`;
+}
+
+async function handleSwap() {
+    const fromToken = document.getElementById('swapFromToken').value;
+    const toToken = document.getElementById('swapToToken').value;
+    const amount = Number(document.getElementById('swapAmount').value);
+    const status = document.getElementById('swapStatus');
+    const button = document.getElementById('swapButton');
+
+    if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
+        status.style.color = '#ef5350';
+        status.textContent = 'No valid user account is available';
+        return;
+    }
+
+    if (fromToken === toToken) {
+        status.style.color = '#ef5350';
+        status.textContent = 'Choose different tokens';
+        return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        status.style.color = '#ef5350';
+        status.textContent = 'Enter a valid amount';
+        return;
+    }
+
+    button.disabled = true;
+    status.style.color = '#8bc34a';
+    status.textContent = 'Building and confirming shielded swap...';
+
+    try {
+        const response = await fetch(`${DEX_API_URL}/dex/swap`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount,
+                fromToken,
+                toToken,
+                source: currentAccountIndex
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || result.error) {
+            throw new Error(result.error || `Swap failed: ${response.status}`);
+        }
+
+        status.style.color = '#8bc34a';
+        status.textContent = `Success: sent ${result.sent}, received ${result.received}`;
+        document.getElementById('swapAmount').value = '';
+        document.getElementById('swapEstimatedReceive').value = '';
+
+        await loadWalletBalance();
+    } catch (error) {
+        console.error('Swap error:', error);
+        status.style.color = '#ef5350';
+        status.textContent = error.message || 'Swap failed';
+    } finally {
+        button.disabled = false;
+    }
+}
         
 async function loadWalletBalance() {
     if (currentAccountIndex === null) {
@@ -758,6 +867,33 @@ setInterval(loadWalletBalance, 10000);
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
+        
+document.getElementById('swapFromToken')?.addEventListener('change', () => {
+    const from = document.getElementById('swapFromToken');
+    const to = document.getElementById('swapToToken');
+
+    if (from.value === to.value) {
+        to.value = from.value === 'vty' ? 'usdv' : 'vty';
+    }
+
+    updateSwapEstimate();
+});
+
+document.getElementById('swapToToken')?.addEventListener('change', () => {
+    const from = document.getElementById('swapFromToken');
+    const to = document.getElementById('swapToToken');
+
+    if (from.value === to.value) {
+        from.value = to.value === 'vty' ? 'usdv' : 'vty';
+    }
+
+    updateSwapEstimate();
+});
+
+document.getElementById('swapAmount')?.addEventListener(
+    'input',
+    updateSwapEstimate
+);
         
         function copyAddress() {
             const address = document.getElementById('userAddress').textContent;
