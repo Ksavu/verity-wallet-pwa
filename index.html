@@ -394,10 +394,11 @@
         </header>
 
         <div class="balance-card">
-            <div class="balance-label">Total Balance</div>
+            <div class="balance-label">VTY Balance</div>
             <div class="balance-amount" id="balance">—</div>
-            <div class="balance-usd" id="balanceHint">Wallet balance unavailable in read-only mode</div>
-            <div class="privacy-badge">🔒 Fully Private</div>
+            <div class="balance-usd" id="balanceHint">Loading...</div>
+            <div class="balance-label" style="margin-top: 15px;">USDV Balance</div>
+            <div class="balance-amount" id="balanceUsdv" style="font-size: 1.5em;">—</div>
         </div>
 
         <div class="section" id="networkPanel">
@@ -782,22 +783,31 @@ async function loadWalletBalance() {
     if (currentAccountIndex === null) {
         await getOrCreateAccount();
     }
-
     try {
         const [balanceRes, addressRes] = await Promise.all([
             fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`).then(r => r.json()),
             fetch(`${WALLET_API_URL}/wallet/address/${currentAccountIndex}`).then(r => r.json())
         ]);
 
-        document.getElementById('balance').textContent = balanceRes.balance.toLocaleString();
-const address = String(addressRes.address || '').trim();
-const addrEl = document.getElementById('userAddress');
-if (addrEl) addrEl.textContent = address;
-renderReceiveQr(address);
+        const vtyBalance = balanceRes.balances
+            ? (balanceRes.balances.find(b => b.denom === 'VTY') || { amount: 0 }).amount
+            : balanceRes.balance;
+        const usdvBalance = balanceRes.balances
+            ? (balanceRes.balances.find(b => b.denom === 'USDV') || { amount: 0 }).amount
+            : 0;
 
+        document.getElementById('balance').textContent = Number(vtyBalance).toLocaleString();
+        document.getElementById('balanceUsdv').textContent = Number(usdvBalance).toLocaleString();
+        document.getElementById('balanceHint').textContent = 'Demo account #' + currentAccountIndex;
+
+        const address = String(addressRes.address || '').trim();
+        const addrEl = document.getElementById('userAddress');
+        if (addrEl) addrEl.textContent = address;
+        renderReceiveQr(address);
     } catch (error) {
         console.error('Wallet API error:', error);
         document.getElementById('balance').textContent = 'Error';
+        document.getElementById('balanceUsdv').textContent = 'Error';
     }
 }
 
