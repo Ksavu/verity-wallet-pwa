@@ -394,9 +394,9 @@
         </header>
 
         <div class="balance-card">
+            <div class="balance-usd" id="balanceHint" style="margin-bottom: 10px;">Loading...</div>
             <div class="balance-label">VTY Balance</div>
             <div class="balance-amount" id="balance">—</div>
-            <div class="balance-usd" id="balanceHint">Loading...</div>
             <div class="balance-label" style="margin-top: 15px;">USDV Balance</div>
             <div class="balance-amount" id="balanceUsdv" style="font-size: 1.5em;">—</div>
         </div>
@@ -511,7 +511,7 @@
 
         <div class="input-group">
             <label class="input-label" for="swapFromToken">You Pay</label>
-            <select id="swapFromToken" class="input-field">
+            <select id="swapFromToken" class="input-field" onchange="updateSwapBalanceDisplay()">
                 <option value="vty">VTY</option>
                 <option value="usdv">USDV</option>
             </select>
@@ -866,9 +866,27 @@ setInterval(loadWalletBalance, 10000);
     }
 }
         
-        function showSwap() {
-            document.getElementById('swapModal').classList.add('active');
-        }
+        async function showSwap() {
+    document.getElementById('swapModal').classList.add('active');
+    await updateSwapBalanceDisplay();
+}
+
+async function updateSwapBalanceDisplay() {
+    const fromToken = document.getElementById('swapFromToken').value.toUpperCase();
+    const balanceEl = document.getElementById('swapFromBalance');
+    balanceEl.textContent = 'Balance: loading...';
+
+    try {
+        const res = await fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`);
+        const data = await res.json();
+        const found = data.balances
+            ? (data.balances.find(b => b.denom === fromToken) || { amount: 0 })
+            : { amount: fromToken === 'VTY' ? data.balance : 0 };
+        balanceEl.textContent = 'Balance: ' + Number(found.amount).toLocaleString() + ' ' + fromToken;
+    } catch (error) {
+        balanceEl.textContent = 'Balance: unavailable';
+    }
+}
         
         function showSettings() {
             alert('Settings coming soon! 🔧');
