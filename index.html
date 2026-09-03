@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10,13 +11,13 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="verity-icon.png">
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #0a1628 0%, #0d1b2a 100%);
@@ -24,23 +25,23 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
+
         .gradient-accent {
             position: fixed;
             top: -50%;
             right: -20%;
             width: 80%;
             height: 80%;
-            background: radial-gradient(circle, rgba(0,188,212,0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 188, 212, 0.15) 0%, transparent 70%);
             z-index: 0;
         }
-        
+
         .container {
             position: relative;
             z-index: 1;
             padding-bottom: 80px;
         }
-        
+
         /* Header */
         header {
             background: rgba(255, 255, 255, 0.03);
@@ -51,11 +52,11 @@
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
+
         .logo {
             height: 35px;
         }
-        
+
         .settings-btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -65,10 +66,10 @@
             font-size: 1.2em;
             cursor: pointer;
         }
-        
+
         /* Balance Card */
         .balance-card {
-            background: linear-gradient(135deg, rgba(0,188,212,0.15) 0%, rgba(139,195,74,0.15) 100%);
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.15) 0%, rgba(139, 195, 74, 0.15) 100%);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(139, 195, 74, 0.2);
             margin: 20px;
@@ -76,13 +77,13 @@
             border-radius: 25px;
             text-align: center;
         }
-        
+
         .balance-label {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9em;
             margin-bottom: 10px;
         }
-        
+
         .balance-amount {
             font-size: 3em;
             font-weight: bold;
@@ -91,12 +92,12 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
         }
-        
+
         .balance-usd {
             color: rgba(255, 255, 255, 0.5);
             font-size: 1.1em;
         }
-        
+
         .privacy-badge {
             display: inline-flex;
             align-items: center;
@@ -108,7 +109,7 @@
             color: #8bc34a;
             margin-top: 15px;
         }
-        
+
         /* Action Buttons */
         .actions {
             display: grid;
@@ -117,7 +118,7 @@
             padding: 0 20px;
             margin: 20px 0;
         }
-        
+
         .action-btn {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -128,34 +129,34 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .action-btn:active {
             transform: scale(0.95);
             background: rgba(255, 255, 255, 0.08);
         }
-        
+
         .action-icon {
             font-size: 2em;
             margin-bottom: 8px;
         }
-        
+
         .action-label {
             color: rgba(255, 255, 255, 0.8);
             font-size: 0.9em;
         }
-        
+
         /* Transaction List */
         .section {
             padding: 0 20px;
             margin: 30px 0;
         }
-        
+
         .section-title {
             font-size: 1.3em;
             margin-bottom: 15px;
             color: rgba(255, 255, 255, 0.9);
         }
-        
+
         .tx-item {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -167,7 +168,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .tx-icon {
             width: 40px;
             height: 40px;
@@ -178,36 +179,36 @@
             justify-content: center;
             font-size: 1.2em;
         }
-        
+
         .tx-details {
             flex: 1;
             margin-left: 15px;
         }
-        
+
         .tx-type {
             font-weight: 600;
             margin-bottom: 3px;
         }
-        
+
         .tx-time {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.85em;
         }
-        
+
         .tx-amount {
             text-align: right;
         }
-        
+
         .tx-value {
             font-weight: bold;
             margin-bottom: 3px;
         }
-        
+
         .tx-status {
             color: #8bc34a;
             font-size: 0.85em;
         }
-        
+
         /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
@@ -222,32 +223,32 @@
             padding: 10px 0;
             z-index: 100;
         }
-        
+
         .nav-item {
             text-align: center;
             padding: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .nav-item.active {
             color: #00bcd4;
         }
-        
+
         .nav-icon {
             font-size: 1.5em;
             margin-bottom: 3px;
         }
-        
+
         .nav-label {
             font-size: 0.75em;
             color: rgba(255, 255, 255, 0.7);
         }
-        
+
         .nav-item.active .nav-label {
             color: #00bcd4;
         }
-        
+
         /* Modal */
         .modal {
             display: none;
@@ -261,13 +262,13 @@
             padding: 20px;
             overflow-y: auto;
         }
-        
+
         .modal.active {
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-content {
             background: linear-gradient(135deg, #0d1b2a 0%, #1a2332 100%);
             border: 1px solid rgba(139, 195, 74, 0.2);
@@ -276,21 +277,21 @@
             max-width: 400px;
             width: 100%;
         }
-        
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
         }
-        
+
         .modal-title {
             font-size: 1.5em;
             background: linear-gradient(135deg, #00bcd4, #8bc34a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .close-btn {
             background: none;
             border: none;
@@ -300,18 +301,18 @@
             padding: 0;
             line-height: 1;
         }
-        
+
         .input-group {
             margin-bottom: 20px;
         }
-        
+
         .input-label {
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9em;
             margin-bottom: 8px;
             display: block;
         }
-        
+
         .input-field {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -322,12 +323,12 @@
             font-size: 1em;
             outline: none;
         }
-        
+
         .input-field:focus {
             border-color: rgba(139, 195, 74, 0.5);
             background: rgba(255, 255, 255, 0.08);
         }
-        
+
         .primary-btn {
             width: 100%;
             background: linear-gradient(135deg, #00bcd4, #8bc34a);
@@ -340,38 +341,38 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        
+
         .primary-btn:active {
             transform: scale(0.98);
         }
-        
+
         .qr-code {
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border-radius: 12px;
-    padding: 18px;
-}
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+        }
 
-#qrCode {
-    min-width: 220px;
-    min-height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        #qrCode {
+            min-width: 220px;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-#qrCode img,
-#qrCode canvas {
-    width: 220px !important;
-    height: 220px !important;
-    image-rendering: pixelated;
-}
+        #qrCode img,
+        #qrCode canvas {
+            width: 220px !important;
+            height: 220px !important;
+            image-rendering: pixelated;
+        }
 
-        
+
         .address-box {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -384,9 +385,10 @@
         }
     </style>
 </head>
+
 <body>
     <div class="gradient-accent"></div>
-    
+
     <div class="container">
         <header>
             <img src="verity-logo.png" alt="Verity" class="logo">
@@ -403,10 +405,39 @@
 
         <div class="section" id="networkPanel">
             <h2 class="section-title">Live Verity Network</h2>
-            <div class="tx-item"><div class="tx-details"><div class="tx-type">Chain ID</div></div><div class="tx-amount"><div class="tx-value" id="chainId">Loading...</div></div></div>
-            <div class="tx-item"><div class="tx-details"><div class="tx-type">Block Height</div></div><div class="tx-amount"><div class="tx-value" id="blockHeight">Loading...</div><div class="tx-status" id="nodeStatus">Connecting...</div></div></div>
-            <div class="tx-item"><div class="tx-details"><div class="tx-type">Validators</div></div><div class="tx-amount"><div class="tx-value" id="validatorCount">Loading...</div></div></div>
-            <div class="tx-item"><div class="tx-details"><div class="tx-type">Last Block</div></div><div class="tx-amount"><div class="tx-value" id="lastBlockTime">Loading...</div></div></div>
+            <div class="tx-item">
+                <div class="tx-details">
+                    <div class="tx-type">Chain ID</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value" id="chainId">Loading...</div>
+                </div>
+            </div>
+            <div class="tx-item">
+                <div class="tx-details">
+                    <div class="tx-type">Block Height</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value" id="blockHeight">Loading...</div>
+                    <div class="tx-status" id="nodeStatus">Connecting...</div>
+                </div>
+            </div>
+            <div class="tx-item">
+                <div class="tx-details">
+                    <div class="tx-type">Validators</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value" id="validatorCount">Loading...</div>
+                </div>
+            </div>
+            <div class="tx-item">
+                <div class="tx-details">
+                    <div class="tx-type">Last Block</div>
+                </div>
+                <div class="tx-amount">
+                    <div class="tx-value" id="lastBlockTime">Loading...</div>
+                </div>
+            </div>
         </div>
 
         <div class="actions">
@@ -426,7 +457,13 @@
 
         <div class="section">
             <h2 class="section-title">Recent Activity</h2>
-            <div class="tx-item"><div class="tx-details"><div class="tx-type">Live transaction history</div><div class="tx-time">Connect a wallet to view private activity</div></div><div class="tx-status">Read-only</div></div>
+            <div class="tx-item">
+                <div class="tx-details">
+                    <div class="tx-type">Live transaction history</div>
+                    <div class="tx-time">Connect a wallet to view private activity</div>
+                </div>
+                <div class="tx-status">Read-only</div>
+            </div>
         </div>
     </div>
 
@@ -454,25 +491,38 @@
     <div class="modal" id="sendModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Send VTY</h2>
+                <h2 class="modal-title" id="sendModalTitle">Send VTY</h2>
                 <button class="close-btn" onclick="closeModal('sendModal')">&times;</button>
             </div>
-            
+
             <div class="input-group">
-                <label class="input-label">Recipient Address</label>
-                <input type="text" class="input-field" id="sendRecipient" placeholder="verity1...">
+                <label class="input-label" for="sendDenom">Token</label>
+                <select class="input-field" id="sendDenom">
+                    <option value="vty">VTY</option>
+                    <option value="usdv">USDV</option>
+                </select>
             </div>
-            
+
             <div class="input-group">
-                <label class="input-label">Amount (VTY)</label>
-                <input type="number" class="input-field" id="sendAmount" placeholder="0.00">
+                <label class="input-label" for="sendRecipient">Recipient Address</label>
+                <input type="text" class="input-field" id="sendRecipient" placeholder="verity1..." autocomplete="off">
             </div>
-            
+
+            <div class="input-group">
+                <label class="input-label" for="sendAmount" id="sendAmountLabel">
+                    Amount (VTY)
+                </label>
+                <input type="number" class="input-field" id="sendAmount" placeholder="0.00" min="0" step="0.000001"
+                    inputmode="decimal">
+            </div>
+
             <div class="privacy-badge" style="width: 100%; justify-content: center; margin: 15px 0;">
                 🔒 Transaction will be fully private
             </div>
-            
-            <button class="primary-btn" onclick="handleSend()">Send VTY</button>
+
+            <button id="sendButton" class="primary-btn" onclick="handleSend()">
+                Send VTY
+            </button>
             <div id="sendStatus" style="margin-top: 10px; font-size: 0.85em;"></div>
         </div>
     </div>
@@ -481,76 +531,87 @@
     <div class="modal" id="receiveModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Receive VTY</h2>
+                <h2 class="modal-title" id="receiveModalTitle">Receive VTY</h2>
                 <button class="close-btn" onclick="closeModal('receiveModal')">&times;</button>
             </div>
-            
+
+            <div class="input-group">
+                <label class="input-label" for="receiveDenom">Token</label>
+                <select class="input-field" id="receiveDenom">
+                    <option value="vty">VTY</option>
+                    <option value="usdv">USDV</option>
+                </select>
+            </div>
+
             <div class="qr-code">
                 <div id="qrCode" aria-label="Verity receiving address QR code"></div>
                 <div id="qrStatus" style="color: #666; margin-top: 10px;">
                     Loading address...
+                </div>
             </div>
-        </div>
-            
-            <div class="input-label">Your Verity Address</div>
+
+            <div class="input-label" id="receiveAddressLabel">Your Verity VTY Address</div>
             <div class="address-box" id="userAddress">
                 Create a wallet to generate a verity1... address
             </div>
-            
+
+            <div id="receiveHelp" class="input-help" style="margin-top: 10px;">
+                This shielded address can receive VTY and USDV.
+            </div>
+
             <button class="primary-btn" onclick="copyAddress()">Copy Address</button>
         </div>
     </div>
 
-<!-- Swap Modal -->
-<div class="modal" id="swapModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Swap Tokens</h2>
-            <button class="close-btn" onclick="closeModal('swapModal' )">&times;</button>
+    <!-- Swap Modal -->
+    <div class="modal" id="swapModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Swap Tokens</h2>
+                <button class="close-btn" onclick="closeModal('swapModal' )">&times;</button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="swapFromToken">You Pay</label>
+                <select id="swapFromToken" class="input-field" onchange="updateSwapBalanceDisplay()">
+                    <option value="vty">VTY</option>
+                    <option value="usdv">USDV</option>
+                </select>
+                <div id="swapFromBalance" class="input-help">Balance: loading...</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="swapAmount">Amount</label>
+                <input id="swapAmount" type="number" class="input-field" min="0" step="any" placeholder="0.00">
+            </div>
+
+            <div style="text-align:center; margin:15px 0; font-size:1.5em; color:#8bc34a;">↓</div>
+
+            <div class="input-group">
+                <label class="input-label" for="swapToToken">You Receive</label>
+                <select id="swapToToken" class="input-field">
+                    <option value="usdv">USDV</option>
+                    <option value="vty">VTY</option>
+                </select>
+                <input id="swapEstimatedReceive" type="text" class="input-field" readonly
+                    placeholder="Estimate will appear here">
+            </div>
+
+            <div id="swapRate" class="input-help">
+                Reference rate: 1 VTY = 100 USDV
+            </div>
+
+            <div class="privacy-badge" style="width:100%; justify-content:center; margin:15px 0;">
+                Shielded swap via Verity DEX
+            </div>
+
+            <div id="swapStatus" class="input-help"></div>
+
+            <button id="swapButton" class="primary-btn" onclick="handleSwap()">
+                Swap
+            </button>
         </div>
-
-        <div class="input-group">
-            <label class="input-label" for="swapFromToken">You Pay</label>
-            <select id="swapFromToken" class="input-field" onchange="updateSwapBalanceDisplay()">
-                <option value="vty">VTY</option>
-                <option value="usdv">USDV</option>
-            </select>
-            <div id="swapFromBalance" class="input-help">Balance: loading...</div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label" for="swapAmount">Amount</label>
-            <input id="swapAmount" type="number" class="input-field"
-                   min="0" step="any" placeholder="0.00">
-        </div>
-
-        <div style="text-align:center; margin:15px 0; font-size:1.5em; color:#8bc34a;">↓</div>
-
-        <div class="input-group">
-            <label class="input-label" for="swapToToken">You Receive</label>
-            <select id="swapToToken" class="input-field">
-                <option value="usdv">USDV</option>
-                <option value="vty">VTY</option>
-            </select>
-            <input id="swapEstimatedReceive" type="text" class="input-field"
-                   readonly placeholder="Estimate will appear here">
-        </div>
-
-        <div id="swapRate" class="input-help">
-            Reference rate: 1 VTY = 100 USDV
-        </div>
-
-        <div class="privacy-badge" style="width:100%; justify-content:center; margin:15px 0;">
-            Shielded swap via Verity DEX
-        </div>
-
-        <div id="swapStatus" class="input-help"></div>
-
-        <button id="swapButton" class="primary-btn" onclick="handleSwap()">
-            Swap
-        </button>
     </div>
-</div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -560,89 +621,90 @@
         const WALLET_API_URL = 'https://wallet-api.veritynetwork.io';
         const DEX_API_URL = 'https://dex-api.veritynetwork.io';
 
-        
-let currentAccountIndex = null;
 
-async function getOrCreateAccount() {
-    const stored = localStorage.getItem('verityAccountIndex');
-    if (stored !== null) {
-        currentAccountIndex = parseInt(stored);
-        return;
-    }
+        let currentAccountIndex = null;
 
-    try {
-        const response = await fetch(`${WALLET_API_URL}/wallet/create`, { method: 'POST' });
-        const data = await response.json();
-        currentAccountIndex = data.accountIndex;
-        localStorage.setItem('verityAccountIndex', currentAccountIndex);
-    } catch (error) {
-    console.error('Failed to create account:', error);
-    currentAccountIndex = null;
-    throw error;
-}
+        async function getOrCreateAccount() {
+            const stored = localStorage.getItem('verityAccountIndex');
+            if (stored !== null) {
+                currentAccountIndex = parseInt(stored);
+                return;
+            }
 
-}
-        
+            try {
+                const response = await fetch(`${WALLET_API_URL}/wallet/create`, { method: 'POST' });
+                const data = await response.json();
+                currentAccountIndex = data.accountIndex;
+                localStorage.setItem('verityAccountIndex', currentAccountIndex);
+            } catch (error) {
+                console.error('Failed to create account:', error);
+                currentAccountIndex = null;
+                throw error;
+            }
+
+        }
+
         async function loadWalletAddress() {
-    if (currentAccountIndex === null) {
-        await getOrCreateAccount();
-    }
+            if (currentAccountIndex === null) {
+                await getOrCreateAccount();
+            }
 
-    if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
-        throw new Error('No valid user account is available');
-    }
+            if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
+                throw new Error('No valid user account is available');
+            }
 
-    const response = await fetch(
-        `${WALLET_API_URL}/wallet/address/${currentAccountIndex}`,
-        { cache: 'no-store' }
-    );
+            const response = await fetch(
+                `${WALLET_API_URL}/wallet/address/${currentAccountIndex}`,
+                { cache: 'no-store' }
+            );
 
-    if (!response.ok) {
-        throw new Error(`Address request failed: ${response.status}`);
-    }
+            if (!response.ok) {
+                throw new Error(`Address request failed: ${response.status}`);
+            }
 
-    const data = await response.json();
-    const address = String(data.address || '').trim();
+            const data = await response.json();
+            const address = String(data.address || '').trim();
 
-    if (!/^verity1[0-9a-z]+$/.test(address)) {
-        throw new Error('Invalid Verity address returned by API');
-    }
+            if (!/^verity1[0-9a-z]+$/.test(address)) {
+                throw new Error('Invalid Verity address returned by API');
+            }
 
-    document.getElementById('userAddress').textContent = address;
-    renderReceiveQr(address);
-    return address;
-}
+            document.getElementById('userAddress').textContent = address;
+            renderReceiveQr(address);
+            return address;
+        }
 
-function renderReceiveQr(address) {
-    const qrElement = document.getElementById('qrCode');
-    const statusElement = document.getElementById('qrStatus');
+        function renderReceiveQr(address) {
+            const qrElement = document.getElementById('qrCode');
+            const statusElement = document.getElementById('qrStatus');
 
-    if (!qrElement || !statusElement) return;
+            if (!qrElement || !statusElement) return;
 
-    qrElement.replaceChildren();
+            qrElement.replaceChildren();
 
-    if (!address || !address.startsWith('verity1')) {
-        statusElement.textContent = 'Create a wallet to generate a QR code';
-        return;
-    }
+            if (!address || !address.startsWith('verity1')) {
+                statusElement.textContent = 'Create a wallet to generate a QR code';
+                return;
+            }
 
-    if (typeof QRCode === 'undefined') {
-        statusElement.textContent = 'QR library could not be loaded';
-        console.error('QRCode library is unavailable');
-        return;
-    }
+            if (typeof QRCode === 'undefined') {
+                statusElement.textContent = 'QR library could not be loaded';
+                console.error('QRCode library is unavailable');
+                return;
+            }
 
-    new QRCode(qrElement, {
-        text: address,
-        width: 220,
-        height: 220,
-        colorDark: '#111111',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
-    });
+            new QRCode(qrElement, {
+                text: address,
+                width: 220,
+                height: 220,
+                colorDark: '#111111',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+            });
 
-    statusElement.textContent = 'Scan to receive VTY';
-}
+            const selectedToken = document.getElementById('receiveDenom')?.value.toUpperCase() || 'VTY';
+            statusElement.textContent = `Scan to receive ${selectedToken}`;
+        }
 
         const EXPECTED_CHAIN_ID = 'verity-testnet-001';
 
@@ -660,6 +722,25 @@ function renderReceiveQr(address) {
             const date = new Date(value);
             return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
         }
+
+        document.getElementById('receiveDenom')?.addEventListener('change', function () {
+            const token = this.value.toUpperCase();
+            const title = document.getElementById('receiveModalTitle');
+            const label = document.getElementById('receiveAddressLabel');
+            const status = document.getElementById('qrStatus');
+            const help = document.getElementById('receiveHelp');
+
+            if (title) title.textContent = `Receive ${token}`;
+            if (label) label.textContent = `Your Verity ${token} Address`;
+            if (status) status.textContent = `Scan to receive ${token}`;
+            if (help) help.textContent =
+                `This shielded address can receive ${token}. The QR contains your Verity address.`;
+
+            const address = document.getElementById('userAddress')?.textContent.trim();
+            if (address && address.startsWith('verity1')) {
+                renderReceiveQr(address);
+            }
+        });
 
         async function refreshNetwork() {
             const status = await rpc('/status');
@@ -693,243 +774,288 @@ function renderReceiveQr(address) {
         loadLiveNetwork();
         setInterval(loadLiveNetwork, 5000);
 
-function updateSwapEstimate() {
-    const fromToken = document.getElementById('swapFromToken').value;
-    const toToken = document.getElementById('swapToToken').value;
-    const amount = Number(document.getElementById('swapAmount').value);
-    const output = document.getElementById('swapEstimatedReceive');
+        function updateSwapEstimate() {
+            const fromToken = document.getElementById('swapFromToken').value;
+            const toToken = document.getElementById('swapToToken').value;
+            const amount = Number(document.getElementById('swapAmount').value);
+            const output = document.getElementById('swapEstimatedReceive');
 
-    if (fromToken === toToken) {
-        output.value = 'Choose different tokens';
-        return;
-    }
+            if (fromToken === toToken) {
+                output.value = 'Choose different tokens';
+                return;
+            }
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-        output.value = '';
-        return;
-    }
+            if (!Number.isFinite(amount) || amount <= 0) {
+                output.value = '';
+                return;
+            }
 
-    // Display-only testnet estimate. The final result comes from the DEX API.
-    const estimated = fromToken === 'vty'
-        ? amount * 100
-        : amount / 100;
+            // Display-only testnet estimate. The final result comes from the DEX API.
+            const estimated = fromToken === 'vty'
+                ? amount * 100
+                : amount / 100;
 
-    output.value = `${estimated.toFixed(6)} ${toToken.toUpperCase()} estimated`;
-}
+            output.value = `${estimated.toFixed(6)} ${toToken.toUpperCase()} estimated`;
+        }
 
-async function handleSwap() {
-    const fromToken = document.getElementById('swapFromToken').value;
-    const toToken = document.getElementById('swapToToken').value;
-    const amount = Number(document.getElementById('swapAmount').value);
-    const status = document.getElementById('swapStatus');
-    const button = document.getElementById('swapButton');
+        async function handleSwap() {
+            const fromToken = document.getElementById('swapFromToken').value;
+            const toToken = document.getElementById('swapToToken').value;
+            const amount = Number(document.getElementById('swapAmount').value);
+            const status = document.getElementById('swapStatus');
+            const button = document.getElementById('swapButton');
 
-    if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
-        status.style.color = '#ef5350';
-        status.textContent = 'No valid user account is available';
-        return;
-    }
+            if (!Number.isInteger(currentAccountIndex) || currentAccountIndex < 1) {
+                status.style.color = '#ef5350';
+                status.textContent = 'No valid user account is available';
+                return;
+            }
 
-    if (fromToken === toToken) {
-        status.style.color = '#ef5350';
-        status.textContent = 'Choose different tokens';
-        return;
-    }
+            if (fromToken === toToken) {
+                status.style.color = '#ef5350';
+                status.textContent = 'Choose different tokens';
+                return;
+            }
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-        status.style.color = '#ef5350';
-        status.textContent = 'Enter a valid amount';
-        return;
-    }
+            if (!Number.isFinite(amount) || amount <= 0) {
+                status.style.color = '#ef5350';
+                status.textContent = 'Enter a valid amount';
+                return;
+            }
 
-    button.disabled = true;
-    status.style.color = '#8bc34a';
-    status.textContent = 'Building and confirming shielded swap...';
+            button.disabled = true;
+            status.style.color = '#8bc34a';
+            status.textContent = 'Building and confirming shielded swap...';
 
-    try {
-        const response = await fetch(`${DEX_API_URL}/dex/swap`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount,
-                fromToken,
-                toToken,
-                source: currentAccountIndex
-            })
+            try {
+                const response = await fetch(`${DEX_API_URL}/dex/swap`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount,
+                        fromToken,
+                        toToken,
+                        source: currentAccountIndex
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || result.error) {
+                    throw new Error(result.error || `Swap failed: ${response.status}`);
+                }
+
+                status.style.color = '#8bc34a';
+                status.textContent = `Success: sent ${result.sent}, received ${result.received}`;
+                document.getElementById('swapAmount').value = '';
+                document.getElementById('swapEstimatedReceive').value = '';
+
+                await loadWalletBalance();
+            } catch (error) {
+                console.error('Swap error:', error);
+                status.style.color = '#ef5350';
+                status.textContent = error.message || 'Swap failed';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function loadWalletBalance() {
+            if (currentAccountIndex === null) {
+                await getOrCreateAccount();
+            }
+            try {
+                const [balanceRes, addressRes] = await Promise.all([
+                    fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`).then(r => r.json()),
+                    fetch(`${WALLET_API_URL}/wallet/address/${currentAccountIndex}`).then(r => r.json())
+                ]);
+
+                const vtyBalance = balanceRes.balances
+                    ? (balanceRes.balances.find(b => b.denom === 'VTY') || { amount: 0 }).amount
+                    : balanceRes.balance;
+                const usdvBalance = balanceRes.balances
+                    ? (balanceRes.balances.find(b => b.denom === 'USDV') || { amount: 0 }).amount
+                    : 0;
+
+                document.getElementById('balance').textContent = Number(vtyBalance).toLocaleString();
+                document.getElementById('balanceUsdv').textContent = Number(usdvBalance).toLocaleString();
+                document.getElementById('balanceHint').textContent = 'Demo account #' + currentAccountIndex;
+
+                const address = String(addressRes.address || '').trim();
+                const addrEl = document.getElementById('userAddress');
+                if (addrEl) addrEl.textContent = address;
+                renderReceiveQr(address);
+            } catch (error) {
+                console.error('Wallet API error:', error);
+                document.getElementById('balance').textContent = 'Error';
+                document.getElementById('balanceUsdv').textContent = 'Error';
+            }
+        }
+
+        async function sendVTY(recipient, amount) {
+            const response = await fetch(`${WALLET_API_URL}/wallet/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: recipient, amount: amount, source: currentAccountIndex })
+            });
+            return response.json();
+        }
+
+        async function handleSend() {
+            const recipient = document.getElementById('sendRecipient').value.trim();
+            const amount = document.getElementById('sendAmount').value.trim();
+            const denom = document.getElementById('sendDenom').value;
+            const status = document.getElementById('sendStatus');
+            const button = document.getElementById('sendButton');
+
+            if (!['vty', 'usdv'].includes(denom)) {
+                status.textContent = 'Select VTY or USDV.';
+                status.style.color = '#ef5350';
+                return;
+            }
+
+            if (!/^verity1[0-9a-z]+$/.test(recipient)) {
+                status.textContent = 'Enter a valid Verity address.';
+                status.style.color = '#ef5350';
+                return;
+            }
+
+            if (!/^\d+(\.\d{1,6})?$/.test(amount) || Number(amount) <= 0) {
+                status.textContent = `Enter a valid ${denom.toUpperCase()} amount.`;
+                status.style.color = '#ef5350';
+                return;
+            }
+
+            // Use the account selected by your existing wallet state.
+            const source = Number(currentAccountIndex);
+
+            if (!Number.isInteger(source) || source < 1) {
+                status.textContent = 'No valid wallet account is selected.';
+                status.style.color = '#ef5350';
+                return;
+            }
+
+            const apiUrl = typeof WALLET_API_URL !== 'undefined'
+                ? WALLET_API_URL
+                : 'https://wallet-api.veritynetwork.io';
+
+            button.disabled = true;
+            status.style.color = '#777';
+            status.textContent = `Sending ${amount} ${denom.toUpperCase()}...`;
+
+            try {
+                const response = await fetch(`${apiUrl}/wallet/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: recipient,
+                        amount: amount,
+                        denom: denom,
+                        source: source
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Transaction failed');
+                }
+
+                status.style.color = '#8bc34a';
+                status.textContent = `${amount} ${denom.toUpperCase()} sent successfully.` +
+                    (result.txHash ? ` TX: ${result.txHash}` : '');
+
+                document.getElementById('sendRecipient').value = '';
+                document.getElementById('sendAmount').value = '';
+
+                if (typeof loadWalletBalance === 'function') {
+                    setTimeout(loadWalletBalance, 5000);
+                }
+            } catch (error) {
+                console.error('Send error:', error);
+                status.style.color = '#ef5350';
+                status.textContent = error.message || 'Transaction failed.';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        document.getElementById('sendDenom')?.addEventListener('change', function () {
+            const token = this.value.toUpperCase();
+
+            const title = document.getElementById('sendModalTitle');
+            const label = document.getElementById('sendAmountLabel');
+            const button = document.getElementById('sendButton');
+
+            if (title) title.textContent = `Send ${token}`;
+            if (label) label.textContent = `Amount (${token})`;
+            if (button) button.textContent = `Send ${token}`;
         });
 
-        const result = await response.json();
-
-        if (!response.ok || result.error) {
-            throw new Error(result.error || `Swap failed: ${response.status}`);
-        }
-
-        status.style.color = '#8bc34a';
-        status.textContent = `Success: sent ${result.sent}, received ${result.received}`;
-        document.getElementById('swapAmount').value = '';
-        document.getElementById('swapEstimatedReceive').value = '';
-
-        await loadWalletBalance();
-    } catch (error) {
-        console.error('Swap error:', error);
-        status.style.color = '#ef5350';
-        status.textContent = error.message || 'Swap failed';
-    } finally {
-        button.disabled = false;
-    }
-}
-        
-async function loadWalletBalance() {
-    if (currentAccountIndex === null) {
-        await getOrCreateAccount();
-    }
-    try {
-        const [balanceRes, addressRes] = await Promise.all([
-            fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`).then(r => r.json()),
-            fetch(`${WALLET_API_URL}/wallet/address/${currentAccountIndex}`).then(r => r.json())
-        ]);
-
-        const vtyBalance = balanceRes.balances
-            ? (balanceRes.balances.find(b => b.denom === 'VTY') || { amount: 0 }).amount
-            : balanceRes.balance;
-        const usdvBalance = balanceRes.balances
-            ? (balanceRes.balances.find(b => b.denom === 'USDV') || { amount: 0 }).amount
-            : 0;
-
-        document.getElementById('balance').textContent = Number(vtyBalance).toLocaleString();
-        document.getElementById('balanceUsdv').textContent = Number(usdvBalance).toLocaleString();
-        document.getElementById('balanceHint').textContent = 'Demo account #' + currentAccountIndex;
-
-        const address = String(addressRes.address || '').trim();
-        const addrEl = document.getElementById('userAddress');
-        if (addrEl) addrEl.textContent = address;
-        renderReceiveQr(address);
-    } catch (error) {
-        console.error('Wallet API error:', error);
-        document.getElementById('balance').textContent = 'Error';
-        document.getElementById('balanceUsdv').textContent = 'Error';
-    }
-}
-
-async function sendVTY(recipient, amount) {
-    const response = await fetch(`${WALLET_API_URL}/wallet/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: recipient, amount: amount, source: currentAccountIndex })
-    });
-    return response.json();
-}
-
-async function handleSend() {
-    const recipient = document.getElementById('sendRecipient').value.trim();
-    const amount = document.getElementById('sendAmount').value.trim();
-    const statusEl = document.getElementById('sendStatus');
-
-    if (!recipient.startsWith('verity1') || !amount || Number(amount) <= 0) {
-        statusEl.style.color = '#ef5350';
-        statusEl.textContent = 'Enter a valid address and amount';
-        return;
-    }
-
-    statusEl.style.color = '#8bc34a';
-    statusEl.textContent = 'Sending...';
-
-    try {
-        const result = await sendVTY(recipient, amount);
-        if (result.success) {
-            statusEl.textContent = `Sent! Tx: ${result.txHash.substring(0, 16)}...`;
-            loadWalletBalance();
-        } else {
-            statusEl.style.color = '#ef5350';
-            statusEl.textContent = result.error || 'Transaction failed';
-        }
-    } catch (error) {
-        statusEl.style.color = '#ef5350';
-        statusEl.textContent = 'Network error. Please try again.';
-    }
-}
-
-loadWalletBalance();
-setInterval(loadWalletBalance, 10000);
-
-        // Modal functions
-        function showSend() {
-            document.getElementById('sendModal').classList.add('active');
-        }
-        
-        function showReceive() {
-    document.getElementById('receiveModal').classList.add('active');
-
-    const address = document.getElementById('userAddress')?.textContent.trim();
-    if (address && address.startsWith('verity1')) {
-        renderReceiveQr(address);
-    }
-}
-        
         async function showSwap() {
-    document.getElementById('swapModal').classList.add('active');
-    await updateSwapBalanceDisplay();
-}
+            document.getElementById('swapModal').classList.add('active');
+            await updateSwapBalanceDisplay();
+        }
 
-async function updateSwapBalanceDisplay() {
-    const fromToken = document.getElementById('swapFromToken').value.toUpperCase();
-    const balanceEl = document.getElementById('swapFromBalance');
-    balanceEl.textContent = 'Balance: loading...';
+        async function updateSwapBalanceDisplay() {
+            const fromToken = document.getElementById('swapFromToken').value.toUpperCase();
+            const balanceEl = document.getElementById('swapFromBalance');
+            balanceEl.textContent = 'Balance: loading...';
 
-    try {
-        const res = await fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`);
-        const data = await res.json();
-        const found = data.balances
-            ? (data.balances.find(b => b.denom === fromToken) || { amount: 0 })
-            : { amount: fromToken === 'VTY' ? data.balance : 0 };
-        balanceEl.textContent = 'Balance: ' + Number(found.amount).toLocaleString() + ' ' + fromToken;
-    } catch (error) {
-        balanceEl.textContent = 'Balance: unavailable';
-    }
-}
-        
+            try {
+                const res = await fetch(`${WALLET_API_URL}/wallet/balance/${currentAccountIndex}`);
+                const data = await res.json();
+                const found = data.balances
+                    ? (data.balances.find(b => b.denom === fromToken) || { amount: 0 })
+                    : { amount: fromToken === 'VTY' ? data.balance : 0 };
+                balanceEl.textContent = 'Balance: ' + Number(found.amount).toLocaleString() + ' ' + fromToken;
+            } catch (error) {
+                balanceEl.textContent = 'Balance: unavailable';
+            }
+        }
+
         function showSettings() {
             alert('Settings coming soon! 🔧');
         }
-        
+
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
-        
-document.getElementById('swapFromToken')?.addEventListener('change', () => {
-    const from = document.getElementById('swapFromToken');
-    const to = document.getElementById('swapToToken');
 
-    if (from.value === to.value) {
-        to.value = from.value === 'vty' ? 'usdv' : 'vty';
-    }
+        document.getElementById('swapFromToken')?.addEventListener('change', () => {
+            const from = document.getElementById('swapFromToken');
+            const to = document.getElementById('swapToToken');
 
-    updateSwapEstimate();
-});
+            if (from.value === to.value) {
+                to.value = from.value === 'vty' ? 'usdv' : 'vty';
+            }
 
-document.getElementById('swapToToken')?.addEventListener('change', () => {
-    const from = document.getElementById('swapFromToken');
-    const to = document.getElementById('swapToToken');
+            updateSwapEstimate();
+        });
 
-    if (from.value === to.value) {
-        from.value = to.value === 'vty' ? 'usdv' : 'vty';
-    }
+        document.getElementById('swapToToken')?.addEventListener('change', () => {
+            const from = document.getElementById('swapFromToken');
+            const to = document.getElementById('swapToToken');
 
-    updateSwapEstimate();
-});
+            if (from.value === to.value) {
+                from.value = to.value === 'vty' ? 'usdv' : 'vty';
+            }
 
-document.getElementById('swapAmount')?.addEventListener(
-    'input',
-    updateSwapEstimate
-);
-        
+            updateSwapEstimate();
+        });
+
+        document.getElementById('swapAmount')?.addEventListener(
+            'input',
+            updateSwapEstimate
+        );
+
         function copyAddress() {
             const address = document.getElementById('userAddress').textContent;
             navigator.clipboard.writeText(address).then(() => {
                 alert('Address copied to clipboard! 📋');
             });
         }
-        
+
         // Close modals when clicking outside
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
@@ -938,11 +1064,53 @@ document.getElementById('swapAmount')?.addEventListener(
                 }
             });
         });
-        
+
+        function showSend() {
+            document.getElementById('sendModal')?.classList.add('active');
+
+            const select = document.getElementById('sendDenom');
+            if (select) {
+                select.dispatchEvent(new Event('change'));
+            }
+        }
+
+        async function showReceive() {
+            document.getElementById('receiveModal')?.classList.add('active');
+
+            try {
+                await loadWalletAddress();
+            } catch (error) {
+                console.error('Receive address error:', error);
+                const status = document.getElementById('qrStatus');
+                if (status) status.textContent = 'Unable to load receiving address';
+            }
+
+            const select = document.getElementById('receiveDenom');
+            if (select) {
+                select.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Load the account, balances, address, and QR when the wallet opens.
+        (async function initializeWallet() {
+            try {
+                await getOrCreateAccount();
+                await Promise.all([
+                    loadWalletBalance(),
+                    loadWalletAddress()
+                ]);
+            } catch (error) {
+                console.error('Wallet initialization failed:', error);
+                const hint = document.getElementById('balanceHint');
+                if (hint) hint.textContent = 'Wallet API unavailable';
+            }
+        })();
+
         // Service Worker for PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
     </script>
 </body>
+
 </html>
